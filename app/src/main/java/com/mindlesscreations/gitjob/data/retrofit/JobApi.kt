@@ -1,4 +1,4 @@
-package com.mindlesscreations.gitjob.data
+package com.mindlesscreations.gitjob.data.retrofit
 
 import com.mindlesscreations.gitjob.domain.entities.Job
 import io.reactivex.Observable
