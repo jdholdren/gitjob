@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">GitJob</string>
 
-    <string name="github_jobs_api_root">https://jobs.github.com/positions.json</string>
+    <string name="github_jobs_api_root">https://jobs.github.com/</string>
 </resources>

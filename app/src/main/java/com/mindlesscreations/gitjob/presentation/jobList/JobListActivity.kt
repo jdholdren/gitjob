@@ -1,22 +1,41 @@
 package com.mindlesscreations.gitjob.presentation.jobList
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import com.mindlesscreations.gitjob.R
-import com.mindlesscreations.gitjob.presentation.GitJobApplication
-import com.mindlesscreations.gitjob.presentation.di.DaggerAppComponent
+import com.mindlesscreations.gitjob.presentation.base.InjectedActivity
+import com.mindlesscreations.gitjob.presentation.di.AppComponent
 import com.mindlesscreations.gitjob.presentation.di.viewModel.ViewModelFactory
 import javax.inject.Inject
 
-class JobListActivity : AppCompatActivity() {
+class JobListActivity : InjectedActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    private lateinit var viewModel: JobListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_main)
 
-        (this.application as GitJobApplication).appComponent.inject(this)
+        this.setupViewModel()
+
+        this.viewModel.init()
+    }
+
+    //region Instance Methods
+
+    private fun setupViewModel() {
+        this.viewModel = ViewModelProviders.of(this, this.viewModelFactory)
+                .get(JobListViewModel::class.java)
+
+        // TODO Observe the jobs data
+    }
+
+    //endregion
+
+    override fun doInjection(component: AppComponent) {
+        component.inject(this)
     }
 }

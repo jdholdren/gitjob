@@ -13,6 +13,6 @@ class JobRepo(
 ) : JobGateway {
 
     override fun getJobs(query: String?, location: String?): Observable<List<Job>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return this.api.fetchJobs(query, location)
     }
 }

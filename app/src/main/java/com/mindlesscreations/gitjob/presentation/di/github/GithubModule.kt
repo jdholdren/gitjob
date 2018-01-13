@@ -1,6 +1,7 @@
 package com.mindlesscreations.gitjob.presentation.di.github
 
 import android.app.Application
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.mindlesscreations.gitjob.R
 import com.mindlesscreations.gitjob.data.repo.JobRepo
 import com.mindlesscreations.gitjob.data.retrofit.JobApi
@@ -19,6 +20,7 @@ class GithubModule {
         val retrofit = Retrofit.Builder()
                 .baseUrl(app.getString(R.string.github_jobs_api_root))
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
 
         return retrofit.create(JobApi::class.java)
