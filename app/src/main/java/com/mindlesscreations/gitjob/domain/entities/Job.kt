@@ -8,5 +8,6 @@ class Job(
         val title: String,
         val location: String,
         val company: String,
-        val description: String
+        val description: String,
+        val companyLogo: String
 )

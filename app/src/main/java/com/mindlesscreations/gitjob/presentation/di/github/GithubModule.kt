@@ -1,6 +1,8 @@
 package com.mindlesscreations.gitjob.presentation.di.github
 
 import android.app.Application
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.mindlesscreations.gitjob.R
 import com.mindlesscreations.gitjob.data.repo.JobRepo
@@ -17,9 +19,14 @@ class GithubModule {
     @Provides
     @Singleton
     fun jobApi(app: Application): JobApi {
+
+        val gson = GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create()
+
         val retrofit = Retrofit.Builder()
                 .baseUrl(app.getString(R.string.github_jobs_api_root))
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
 

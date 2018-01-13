@@ -7,6 +7,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.mindlesscreations.gitjob.domain.ExecutionWrapper
 import com.mindlesscreations.gitjob.domain.entities.Job
+import com.mindlesscreations.gitjob.domain.entities.Resource
 import com.mindlesscreations.gitjob.domain.gateways.JobGateway
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
@@ -24,8 +25,8 @@ class JobListViewModel @Inject constructor(
     private var disposable: Disposable? = null
 
     // The observable data for the view to display
-    private val _data = MutableLiveData<List<Job>>()
-    private val data: LiveData<List<Job>>
+    private val _data = MutableLiveData<Resource<List<Job>>>()
+    val data: LiveData<Resource<List<Job>>>
         get() = _data
 
     fun init() {
@@ -39,10 +40,9 @@ class JobListViewModel @Inject constructor(
 
         this.disposable = this.wrapper.wrap(this.jobGateway.getJobs(null, null))
                 .subscribe({ jobs ->
-                    val gson = Gson()
-                    Log.v("Jobs", gson.toJson(jobs))
+                    this._data.value = Resource.success(jobs)
                 }, { e ->
-                    e.printStackTrace()
+                    this._data.value = Resource.error(e.message!!, null)
                 })
     }
 
