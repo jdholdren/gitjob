@@ -1,12 +1,17 @@
 package com.mindlesscreations.gitjob.presentation.jobList
 
+import android.animation.Animator
+import android.animation.AnimatorSet
+import android.animation.ValueAnimator
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
 import com.mindlesscreations.gitjob.R
 import com.mindlesscreations.gitjob.domain.entities.Job
 import com.mindlesscreations.gitjob.domain.entities.Resource
@@ -27,6 +32,8 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
     private lateinit var viewModel: JobListViewModel
 
     private val adapter = JobAdapter()
+
+    private var locationAnimator: AnimatorSet? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +81,14 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
             refresh()
             true
         }
+
+        this.location_switch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                this.locationTextEnabled(false)
+            } else {
+                this.locationTextEnabled(true)
+            }
+        }
     }
 
     /**
@@ -106,8 +121,8 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
                 this.swipe_refresh.isRefreshing = false
 
                 Snackbar.make(this.recycler_view, resource.message!!, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.retry, { refresh() })
                         .show()
-                // TODO Give the option to refresh
             }
             Resource.Status.SUCCESS -> {
                 // Turn off the loader
@@ -135,6 +150,38 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
     private fun refresh() {
         val (keywords, location) = getParams()
         this.viewModel.loadJobs(keywords, location)
+    }
+
+    private fun locationTextEnabled(enabled: Boolean) {
+        this.locationAnimator?.cancel()
+
+        // Get the current height
+        val height = this.location_container.measuredHeight
+
+        // Measure for max height
+        this.location_container.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        val maxHeight = this.location_container.measuredHeight
+
+        val start = if (enabled) 0f else 1f
+        val end = if (enabled) 1f else 0f
+        val valAnimator = ValueAnimator.ofFloat(start, end)
+        valAnimator.duration = if (enabled) 225 else 195
+        valAnimator.interpolator = AccelerateDecelerateInterpolator()
+
+        valAnimator.addUpdateListener { animator ->
+            val animatedValue = animator.animatedValue as Float
+            this.location_container.layoutParams.height = if (enabled) {
+                (animatedValue * (maxHeight - height)).toInt()
+            } else {
+                (animatedValue * height).toInt()
+            }
+            this.location_container.requestLayout()
+        }
+
+        this.locationAnimator = AnimatorSet()
+        this.locationAnimator?.play(valAnimator)
+
+        this.locationAnimator?.start()
     }
 
     //endregion

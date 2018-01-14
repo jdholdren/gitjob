@@ -7,4 +7,7 @@
     <string name="apply_now">Visit Website</string>
     <string name="keywords">Keywords</string>
     <string name="location">Location</string>
+    <string name="user_my_location">Use my location</string>
+
+    <string name="retry">Retry</string>
 </resources>
