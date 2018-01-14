@@ -1,13 +1,17 @@
 package com.mindlesscreations.gitjob.presentation.jobList
 
+import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
@@ -51,6 +55,21 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
         this.viewModel.init(keywords, location)
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            RC_LOCATION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    refresh()
+                } else {
+                    // Permission denied, unswitch
+                    this.location_switch.isChecked = false
+                }
+            }
+        }
+    }
+
     //region Instance Methods
 
     /**
@@ -87,10 +106,33 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(this.location.windowToken, 0)
 
+            var wasRequested = false
+
+            // Check for the location permission
+            if (isChecked && ContextCompat
+                    .checkSelfPermission(
+                            this,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED) {
+                // Returning after this function does not execute, so set wasRequest to true so that
+                // the rest of this function doesn't execute
+                wasRequested = true
+
+                ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                        RC_LOCATION
+                )
+            }
+
             if (isChecked) {
                 this.locationTextEnabled(false)
             } else {
                 this.locationTextEnabled(true)
+            }
+
+            if (!wasRequested) {
+                refresh()
             }
         }
     }
@@ -144,7 +186,8 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
     private fun getParams(): Params {
         return Params(
                 this.keywords.text.toString(),
-                this.location.text.toString()
+                this.location.text.toString(),
+                this.location_switch.isChecked
         )
     }
 
@@ -168,6 +211,9 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
         // Measure for max height
         this.location_container.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         val maxHeight = this.location_container.measuredHeight
+
+        // Prevent expansion at max size from making the field disappear
+        if (enabled && maxHeight == height) return
 
         val start = if (enabled) 0f else 1f
         val end = if (enabled) 1f else 0f
@@ -209,5 +255,9 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
 
     //endregion
 
-    data class Params(val keywords: String?, val location: String?)
+    data class Params(val keywords: String?, val location: String?, val useGps: Boolean)
+
+    companion object {
+        val RC_LOCATION = 0
+    }
 }
