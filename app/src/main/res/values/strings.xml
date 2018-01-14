@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">GitJob</string>
 
-    <string name="github_jobs_api_root">https://jobs.github.com/</string>
+    <string name="github_jobs_api_root" translatable="false">https://jobs.github.com/</string>
+
+    <string name="company_and_location">%s \u00B7 %s</string>
+    <string name="apply_now">Apply Now</string>
 </resources>
