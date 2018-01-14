@@ -15,7 +15,11 @@ import kotlinx.android.synthetic.main.item_job.view.*
 
 class JobAdapter : RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
 
+    // The backing list of jobs to display
     private var jobs: List<Job> = emptyList()
+
+    // The listener for click events
+    var listener: OnClickListener? = null
 
     /**
      * Sets the info on the card and loads the image
@@ -28,12 +32,17 @@ class JobAdapter : RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
         holder.title.text = job.title
         holder.location.text = job.location
 
-                // Load the image
-                Glide.with(holder.itemView?.context!!)
+        // Load the image
+        Glide.with(holder.itemView?.context!!)
                 .load(job.companyLogo)
                 .apply(RequestOptions().placeholder(R.drawable.ic_image_black_24dp))
                 .apply(RequestOptions.fitCenterTransform())
                 .into(holder.image)
+
+        // Attach the click listener
+        holder.itemView.setOnClickListener {
+            this.listener?.onJobClicked(job)
+        }
     }
 
     /**
@@ -113,5 +122,12 @@ class JobAdapter : RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return true
         }
+    }
+
+    /**
+     * The interface for a listener to implement in order to the user choosing a job from the list
+     */
+    interface OnClickListener {
+        fun onJobClicked(job: Job)
     }
 }

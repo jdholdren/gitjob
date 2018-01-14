@@ -30,7 +30,7 @@ kapt {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     // Support
     implementation 'com.android.support:appcompat-v7:27.0.2'
@@ -58,7 +58,7 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
 
     // Glide
-    implementation ("com.github.bumptech.glide:glide:4.5.0") {
+    implementation("com.github.bumptech.glide:glide:4.5.0") {
         exclude group: "com.android.support"
     }
 

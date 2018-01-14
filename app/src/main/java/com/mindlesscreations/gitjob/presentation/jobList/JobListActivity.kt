@@ -12,11 +12,12 @@ import com.mindlesscreations.gitjob.presentation.base.InjectedActivity
 import com.mindlesscreations.gitjob.presentation.decorator.VerticalSpaceDecorator
 import com.mindlesscreations.gitjob.presentation.di.AppComponent
 import com.mindlesscreations.gitjob.presentation.di.viewModel.ViewModelFactory
+import com.mindlesscreations.gitjob.presentation.jobDetail.JobDetailActivity
 import com.mindlesscreations.gitjob.presentation.jobList.adapter.JobAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class JobListActivity : InjectedActivity() {
+class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -46,6 +47,7 @@ class JobListActivity : InjectedActivity() {
         this.recycler_view.addItemDecoration(VerticalSpaceDecorator(
                 this.resources.getDimension(R.dimen.card_vertical_space).toInt()
         ))
+        this.adapter.listener = this
     }
 
     /**
@@ -77,7 +79,19 @@ class JobListActivity : InjectedActivity() {
 
     //endregion
 
+    //region JobAdapter.OnClickListener implementation
+
+    override fun onJobClicked(job: Job) {
+        this.startActivity(JobDetailActivity.createIntent(this, job.id))
+    }
+
+    //endregion
+
+    //region DI
+
     override fun doInjection(component: AppComponent) {
         component.inject(this)
     }
+
+    //endregion
 }

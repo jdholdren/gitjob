@@ -5,6 +5,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- For when we don't need a toolbar -->
+    <style name="AppThemeNoToolbar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <style name="ItemJobCompany">
         <item name="android:textColor">@color/black_30</item>
         <item name="android:textSize">12sp</item>
@@ -14,6 +21,4 @@
         <item name="android:textColor">@color/black_87</item>
         <item name="android:textSize">18sp</item>
     </style>
-
-
 </resources>
