@@ -36,6 +36,11 @@ class JobDetailActivity : AppCompatActivity() {
     private fun renderJob(job: Job) {
         this.company.text = job.company
         this.job_title.text = job.title
+
+        // TODO Set the location
+
+        // Set the description
+        this.html_text_view.setHtml(job.description)
     }
 
     //endregion
