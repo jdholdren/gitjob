@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.mindlesscreations.gitjob.R
 import com.mindlesscreations.gitjob.domain.entities.Job
 import kotlinx.android.synthetic.main.activity_job_detail.*
@@ -38,6 +40,12 @@ class JobDetailActivity : AppCompatActivity() {
         this.job_title.text = job.title
 
         // TODO Set the location
+
+        // TODO Load the image
+        Glide.with(this)
+                .load(job.companyLogo)
+                .apply(RequestOptions().centerCrop())
+                .into(this.image_background)
 
         // Set the description
         this.html_text_view.setHtml(job.description)

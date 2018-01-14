@@ -9,10 +9,10 @@ import android.os.Parcelable
 data class Job(
         val id: String,
         val title: String,
-        val location: String,
+        val location: String?,
         val company: String,
         val description: String,
-        val companyLogo: String
+        val companyLogo: String?
 ) : Parcelable {
 
     /**
