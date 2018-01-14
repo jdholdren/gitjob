@@ -69,6 +69,9 @@ dependencies {
         exclude group: "com.android.support"
     }
 
+    // Chrome Custom tabs
+    implementation 'com.android.support:customtabs:27.0.2'
+
     testImplementation 'junit:junit:4.12'
 
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

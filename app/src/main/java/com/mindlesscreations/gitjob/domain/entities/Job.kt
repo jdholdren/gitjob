@@ -12,13 +12,15 @@ data class Job(
         val location: String?,
         val company: String,
         val description: String,
-        val companyLogo: String?
+        val companyLogo: String?,
+        val companyUrl: String?
 ) : Parcelable {
 
     /**
      * When making this object from a parcel
      */
     constructor(parcel: Parcel) : this(
+            parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
@@ -37,6 +39,7 @@ data class Job(
         dest.writeString(this.company)
         dest.writeString(this.description)
         dest.writeString(this.companyLogo)
+        dest.writeString(this.companyUrl)
     }
 
     /**

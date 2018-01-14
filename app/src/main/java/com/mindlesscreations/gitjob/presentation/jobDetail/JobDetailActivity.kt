@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -16,6 +15,12 @@ import com.mindlesscreations.gitjob.R
 import com.mindlesscreations.gitjob.domain.entities.Job
 import kotlinx.android.synthetic.main.activity_job_detail.*
 import java.util.*
+import android.net.Uri
+import android.support.customtabs.CustomTabsIntent
+import android.support.v4.content.ContextCompat
+import android.util.Log
+import android.view.View
+
 
 class JobDetailActivity : AppCompatActivity() {
 
@@ -71,7 +76,26 @@ class JobDetailActivity : AppCompatActivity() {
     }
 
     private fun setupApplyButton(job: Job) {
-        // TODO Attach on click
+        if (job.companyUrl == null) {
+            this.apply_button.visibility = View.GONE
+            return
+        }
+
+        this.apply_button.setOnClickListener {
+            this.launchUrl(job.companyUrl)
+        }
+
+        // The scrollY won't change until the toolbar is collapsed, so two listeners must be used
+        var oldOffset = 0
+        this.app_bar.addOnOffsetChangedListener { _, verticalOffset ->
+            if (oldOffset < verticalOffset && !this.applyHidden) {
+                this.hideApply()
+            } else if (this.applyHidden && (verticalOffset == 0 || verticalOffset < oldOffset)) {
+                this.showApply()
+            }
+
+            oldOffset = verticalOffset
+        }
 
         this.scroll_view.setOnScrollChangeListener { _: NestedScrollView?, scrollX: Int, scrollY: Int, _: Int, oldScrollY: Int ->
 
@@ -92,7 +116,7 @@ class JobDetailActivity : AppCompatActivity() {
                 "translationY",
                 this.apply_button.translationY,
                 200f
-                )
+        )
         objectAnimator.duration = 225
         objectAnimator.interpolator = AccelerateDecelerateInterpolator()
 
@@ -122,6 +146,14 @@ class JobDetailActivity : AppCompatActivity() {
         this.applyAnimator?.play(objectAnimator)
 
         this.applyAnimator?.start()
+    }
+
+    private fun launchUrl(url: String) {
+        val intent = CustomTabsIntent.Builder()
+                .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                .build()
+
+        intent.launchUrl(this, Uri.parse(url))
     }
 
     //endregion
