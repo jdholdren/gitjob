@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager
 import com.mindlesscreations.gitjob.R
 import com.mindlesscreations.gitjob.domain.entities.Job
 import com.mindlesscreations.gitjob.domain.entities.Resource
-import com.mindlesscreations.gitjob.domain.entities.Status
 import com.mindlesscreations.gitjob.presentation.base.InjectedActivity
 import com.mindlesscreations.gitjob.presentation.decorator.VerticalSpaceDecorator
 import com.mindlesscreations.gitjob.presentation.di.AppComponent
@@ -56,21 +55,21 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
     private fun setupViewModel() {
         this.viewModel = ViewModelProviders.of(this, this.viewModelFactory)
                 .get(JobListViewModel::class.java)
-        this.viewModel.data.observe({this.lifecycle}, { res ->
+        this.viewModel.data.observe({ this.lifecycle }, { res ->
             if (res != null) this.setJobs(res)
         })
     }
 
     private fun setJobs(resource: Resource<List<Job>>) {
         when (resource.status) {
-            Status.LOADING -> {
+            Resource.Status.LOADING -> {
             } // TODO Show the swipe loader
-            Status.ERROR -> {
+            Resource.Status.ERROR -> {
                 Snackbar.make(this.recycler_view, resource.message!!, Snackbar.LENGTH_INDEFINITE)
                         .show()
                 // Give the option to refresh
             }
-            Status.SUCCESS -> {
+            Resource.Status.SUCCESS -> {
                 // Set the job list on the adapter
                 this.adapter.setJobs(resource.data!!)
             }
@@ -82,7 +81,7 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
     //region JobAdapter.OnClickListener implementation
 
     override fun onJobClicked(job: Job) {
-        this.startActivity(JobDetailActivity.createIntent(this, job.id))
+        this.startActivity(JobDetailActivity.createIntent(this, job))
     }
 
     //endregion

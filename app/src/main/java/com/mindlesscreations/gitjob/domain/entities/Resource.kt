@@ -1,6 +1,6 @@
 package com.mindlesscreations.gitjob.domain.entities
 
-class Resource<T> private constructor(val status: Status, val data: T?, val message: String?) {
+class Resource<out T> private constructor(val status: Status, val data: T?, val message: String?) {
     companion object {
 
         fun <T> success(data: T): Resource<T> {
@@ -15,8 +15,8 @@ class Resource<T> private constructor(val status: Status, val data: T?, val mess
             return Resource(Status.LOADING, data, null)
         }
     }
-}
 
-enum class Status {
-    LOADING, SUCCESS, ERROR
+    enum class Status {
+        LOADING, SUCCESS, ERROR
+    }
 }

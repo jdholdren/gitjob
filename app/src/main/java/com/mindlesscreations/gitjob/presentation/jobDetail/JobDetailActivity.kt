@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.mindlesscreations.gitjob.R
+import com.mindlesscreations.gitjob.domain.entities.Job
 import kotlinx.android.synthetic.main.activity_job_detail.*
 
 class JobDetailActivity : AppCompatActivity() {
@@ -13,6 +14,15 @@ class JobDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         this.setupView()
+
+        // Get the job from the intent
+        val job = this.intent?.getParcelableExtra<Job>(EXTRA_JOB)
+
+        if (job == null) {
+            this.finish()
+        } else {
+            this.renderJob(job)
+        }
     }
 
     //region Instance Methods
@@ -23,15 +33,20 @@ class JobDetailActivity : AppCompatActivity() {
         this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
+    private fun renderJob(job: Job) {
+        this.company.text = job.company
+        this.job_title.text = job.title
+    }
+
     //endregion
 
     companion object {
 
-        private val EXTRA_JOB_ID = "jobDetail.extras.jobId"
+        private val EXTRA_JOB = "jobDetail.extras.job"
 
-        fun createIntent(context: Context, jobId: String): Intent {
+        fun createIntent(context: Context, job: Job): Intent {
             val intent = Intent(context, JobDetailActivity::class.java)
-            intent.putExtra(EXTRA_JOB_ID, jobId)
+            intent.putExtra(EXTRA_JOB, job)
 
             return intent
         }

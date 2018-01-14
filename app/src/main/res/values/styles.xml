@@ -1,4 +1,5 @@
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -20,5 +21,10 @@
     <style name="ItemJobTitle">
         <item name="android:textColor">@color/black_87</item>
         <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="DetailTitle">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 </resources>
