@@ -83,6 +83,10 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
         }
 
         this.location_switch.setOnCheckedChangeListener { _, isChecked ->
+            // Can get into a weird state where you can input the text if you hide it with keyboard up
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(this.location.windowToken, 0)
+
             if (isChecked) {
                 this.locationTextEnabled(false)
             } else {
@@ -152,6 +156,9 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
         this.viewModel.loadJobs(keywords, location)
     }
 
+    /**
+     * Based on true/false, hides or shows the location text field
+     */
     private fun locationTextEnabled(enabled: Boolean) {
         this.locationAnimator?.cancel()
 
