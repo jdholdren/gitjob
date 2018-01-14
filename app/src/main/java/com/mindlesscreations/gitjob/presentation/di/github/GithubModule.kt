@@ -13,12 +13,22 @@ import dagger.Provides
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+
+
 
 @Module
 class GithubModule {
     @Provides
     @Singleton
     fun jobApi(app: Application): JobApi {
+
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
+        val httpClient = OkHttpClient.Builder()
+        httpClient.addNetworkInterceptor(loggingInterceptor)
 
         val gson = GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -28,6 +38,7 @@ class GithubModule {
                 .baseUrl(app.getString(R.string.github_jobs_api_root))
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(httpClient.build())
                 .build()
 
         return retrofit.create(JobApi::class.java)

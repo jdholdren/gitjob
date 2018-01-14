@@ -5,4 +5,6 @@
 
     <string name="company_and_location">%s \u00B7 %s</string>
     <string name="apply_now">Visit Website</string>
+    <string name="keywords">Keywords</string>
+    <string name="location">Location</string>
 </resources>

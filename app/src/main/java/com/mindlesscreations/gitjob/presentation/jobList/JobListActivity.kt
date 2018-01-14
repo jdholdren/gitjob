@@ -1,9 +1,12 @@
 package com.mindlesscreations.gitjob.presentation.jobList
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
+import android.view.inputmethod.InputMethodManager
 import com.mindlesscreations.gitjob.R
 import com.mindlesscreations.gitjob.domain.entities.Job
 import com.mindlesscreations.gitjob.domain.entities.Resource
@@ -29,10 +32,16 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_main)
 
+        // Set the toolbar as the support action bar
+        this.setSupportActionBar(this.toolbar)
+
         this.setupRecycler()
         this.setupViewModel()
+        this.setupFields()
+        this.setupSwipeRefresh()
 
-        this.viewModel.init()
+        val (keywords, location) = getParams()
+        this.viewModel.init(keywords, location)
     }
 
     //region Instance Methods
@@ -50,6 +59,24 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
     }
 
     /**
+     * Adds on enter listeners for each field
+     */
+    private fun setupFields() {
+        this.keywords.setOnEditorActionListener { _, _, _ ->
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(this.keywords.windowToken, 0)
+            refresh()
+            true
+        }
+        this.location.setOnEditorActionListener { _, _, _ ->
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(this.location.windowToken, 0)
+            refresh()
+            true
+        }
+    }
+
+    /**
      * Gets the reference to the view model and attaches observes the live data
      */
     private fun setupViewModel() {
@@ -60,20 +87,54 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
         })
     }
 
+    /**
+     * Attaches the refresh listener to grab the current settings and refresh
+     */
+    private fun setupSwipeRefresh() {
+        this.swipe_refresh.setOnRefreshListener {
+            refresh()
+        }
+    }
+
     private fun setJobs(resource: Resource<List<Job>>) {
         when (resource.status) {
             Resource.Status.LOADING -> {
-            } // TODO Show the swipe loader
+                this.swipe_refresh.isRefreshing = true
+            }
             Resource.Status.ERROR -> {
+                // Turn off the loader
+                this.swipe_refresh.isRefreshing = false
+
                 Snackbar.make(this.recycler_view, resource.message!!, Snackbar.LENGTH_INDEFINITE)
                         .show()
-                // Give the option to refresh
+                // TODO Give the option to refresh
             }
             Resource.Status.SUCCESS -> {
+                // Turn off the loader
+                this.swipe_refresh.isRefreshing = false
+
                 // Set the job list on the adapter
                 this.adapter.setJobs(resource.data!!)
             }
         }
+    }
+
+    /**
+     * Grabs the view's currently entered parameters
+     */
+    private fun getParams(): Params {
+        return Params(
+                this.keywords.text.toString(),
+                this.location.text.toString()
+        )
+    }
+
+    /**
+     * Triggers a reload of the screen, getting the current inputs and passing them along
+     */
+    private fun refresh() {
+        val (keywords, location) = getParams()
+        this.viewModel.loadJobs(keywords, location)
     }
 
     //endregion
@@ -93,4 +154,6 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
     }
 
     //endregion
+
+    data class Params(val keywords: String?, val location: String?)
 }

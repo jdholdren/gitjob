@@ -29,16 +29,20 @@ class JobListViewModel @Inject constructor(
     val data: LiveData<Resource<List<Job>>>
         get() = _data
 
-    fun init() {
+    fun init(keywords: String?, location: String?) {
         if (!hasBeenInit) {
-            this.loadJobs()
+            this.loadJobs(keywords, location)
+
+            this.hasBeenInit = true
         }
     }
 
-    fun loadJobs() {
+    fun loadJobs(keywords: String?, location: String?) {
         this.disposable?.dispose()
 
-        this.disposable = this.wrapper.wrap(this.jobGateway.getJobs(null, null))
+        this._data.value = Resource.loading(emptyList())
+
+        this.disposable = this.wrapper.wrap(this.jobGateway.getJobs(keywords, location))
                 .subscribe({ jobs ->
                     this._data.value = Resource.success(jobs)
                 }, { e ->
