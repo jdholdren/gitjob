@@ -11,6 +11,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class LocationRepo(private val client: FusedLocationProviderClient, private val context: Context) : LocationGateway {
+
+    /**
+     * Requests of the fused provided a location, once it gets one, it unsubscribes. On error also unsubs
+     */
     override fun requestLocation(): Observable<Location> {
         return Flowable.create({ e: Emitter<Location> ->
             if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -24,7 +28,7 @@ class LocationRepo(private val client: FusedLocationProviderClient, private val 
                     override fun onLocationResult(lr: LocationResult?) {
                         if (lr != null && lr.lastLocation != null) {
                             client.removeLocationUpdates(this)
-                            e.onNext(lr.locations[lr.locations.size - 1])
+                            e.onNext(lr.lastLocation)
                             e.onComplete()
                         }
                     }

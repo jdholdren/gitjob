@@ -70,8 +70,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
                         android:layout_centerVertical="true"
+                        android:layout_marginEnd="8dp"
                         android:layout_toStartOf="@id/location_switch"
                         android:text="@string/user_my_location" />
 
@@ -103,4 +103,32 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <!-- Empty State -->
+    <LinearLayout
+        android:id="@+id/empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/colorAccent"
+            app:srcCompat="@drawable/ic_sentiment_dissatisfied_black_24dp" />
+
+        <TextView
+            style="@style/ItemJobTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:paddingEnd="64dp"
+            android:paddingStart="64dp"
+            android:text="@string/empty_message" />
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

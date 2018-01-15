@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
@@ -174,6 +175,12 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
 
                 // Set the job list on the adapter
                 this.adapter.setJobs(resource.data!!)
+
+                this.empty_state.visibility = if (resource.data.isEmpty()) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
             }
         }
     }
