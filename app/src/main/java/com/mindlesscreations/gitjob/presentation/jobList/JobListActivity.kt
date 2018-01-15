@@ -1,14 +1,12 @@
 package com.mindlesscreations.gitjob.presentation.jobList
 
 import android.Manifest
-import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -51,8 +49,8 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
         this.setupFields()
         this.setupSwipeRefresh()
 
-        val (keywords, location) = getParams()
-        this.viewModel.init(keywords, location)
+        val (keywords, location, useGps) = getParams()
+        this.viewModel.init(keywords, location, useGps)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -195,8 +193,8 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
      * Triggers a reload of the screen, getting the current inputs and passing them along
      */
     private fun refresh() {
-        val (keywords, location) = getParams()
-        this.viewModel.loadJobs(keywords, location)
+        val (keywords, location, useGps) = getParams()
+        this.viewModel.loadJobs(keywords, location, useGps)
     }
 
     /**

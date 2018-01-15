@@ -7,5 +7,5 @@ import io.reactivex.Observable
  * Represents the surface for retrieving jobs
  */
 interface JobGateway {
-    fun getJobs(query: String?, location: String?): Observable<List<Job>>
+    fun getJobs(query: String?, location: String?, useCourseLocation: Boolean): Observable<List<Job>>
 }

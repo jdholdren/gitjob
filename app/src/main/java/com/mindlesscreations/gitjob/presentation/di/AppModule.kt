@@ -4,12 +4,13 @@ import android.app.Application
 import com.mindlesscreations.gitjob.domain.ExecutionWrapper
 import com.mindlesscreations.gitjob.execution.ExecutionWrapperImpl
 import com.mindlesscreations.gitjob.presentation.di.github.GithubModule
+import com.mindlesscreations.gitjob.presentation.di.github.LocationModule
 import com.mindlesscreations.gitjob.presentation.di.viewModel.ViewModelModule
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module(includes = [ViewModelModule::class, GithubModule::class])
+@Module(includes = [ViewModelModule::class, GithubModule::class, LocationModule::class])
 class AppModule(private val app: Application) {
 
     @Provides

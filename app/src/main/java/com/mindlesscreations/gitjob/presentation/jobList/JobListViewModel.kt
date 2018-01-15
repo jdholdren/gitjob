@@ -3,8 +3,6 @@ package com.mindlesscreations.gitjob.presentation.jobList
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.util.Log
-import com.google.gson.Gson
 import com.mindlesscreations.gitjob.domain.ExecutionWrapper
 import com.mindlesscreations.gitjob.domain.entities.Job
 import com.mindlesscreations.gitjob.domain.entities.Resource
@@ -29,20 +27,20 @@ class JobListViewModel @Inject constructor(
     val data: LiveData<Resource<List<Job>>>
         get() = _data
 
-    fun init(keywords: String?, location: String?) {
+    fun init(keywords: String?, location: String?, useGps: Boolean) {
         if (!hasBeenInit) {
-            this.loadJobs(keywords, location)
+            this.loadJobs(keywords, location, useGps)
 
             this.hasBeenInit = true
         }
     }
 
-    fun loadJobs(keywords: String?, location: String?) {
+    fun loadJobs(keywords: String?, location: String?, useGps: Boolean) {
         this.disposable?.dispose()
 
         this._data.value = Resource.loading(emptyList())
 
-        this.disposable = this.wrapper.wrap(this.jobGateway.getJobs(keywords, location))
+        this.disposable = this.wrapper.wrap(this.jobGateway.getJobs(keywords, location, useGps))
                 .subscribe({ jobs ->
                     this._data.value = Resource.success(jobs)
                 }, { e ->

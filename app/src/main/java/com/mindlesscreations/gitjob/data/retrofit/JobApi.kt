@@ -13,4 +13,11 @@ interface JobApi {
             @Query("description") query: String?,
             @Query("location") location: String?
     ): Observable<List<Job>>
+
+    @GET("positions.json")
+    fun fetchJobsWithLatLong(
+            @Query("description") query: String?,
+            @Query("lat") lat: Double,
+            @Query("long") long: Double
+    ): Observable<List<Job>>
 }
