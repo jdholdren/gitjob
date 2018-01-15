@@ -63,6 +63,7 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <RelativeLayout
+                    android:id="@+id/gps_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp">

@@ -64,6 +64,10 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
                 } else {
                     // Permission denied, unswitch
                     this.location_switch.isChecked = false
+
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                        this.gps_container.visibility = View.INVISIBLE
+                    }
                 }
             }
         }
@@ -98,6 +102,13 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
             imm.hideSoftInputFromWindow(this.location.windowToken, 0)
             refresh()
             true
+        }
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && !ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            // Hide the switch
+            this.gps_container.visibility = View.INVISIBLE
+            return
         }
 
         this.location_switch.setOnCheckedChangeListener { _, isChecked ->
