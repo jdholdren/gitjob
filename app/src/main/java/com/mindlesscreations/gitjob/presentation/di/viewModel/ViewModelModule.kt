@@ -1,11 +1,11 @@
 package com.mindlesscreations.gitjob.presentation.di.viewModel
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.mindlesscreations.gitjob.presentation.jobList.JobListViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider
 
 @Module
 abstract class ViewModelModule {

@@ -3,7 +3,7 @@ package com.mindlesscreations.gitjob.data.repo
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 import com.mindlesscreations.gitjob.domain.gateways.LocationGateway
 import io.reactivex.*

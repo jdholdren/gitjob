@@ -1,7 +1,7 @@
 package com.mindlesscreations.gitjob.presentation.base
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.mindlesscreations.gitjob.presentation.GitJobApplication
 import com.mindlesscreations.gitjob.presentation.di.AppComponent
 

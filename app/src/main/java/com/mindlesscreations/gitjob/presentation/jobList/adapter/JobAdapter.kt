@@ -1,7 +1,7 @@
 package com.mindlesscreations.gitjob.presentation.jobList.adapter
 
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +13,7 @@ import com.mindlesscreations.gitjob.R
 import com.mindlesscreations.gitjob.domain.entities.Job
 import kotlinx.android.synthetic.main.item_job.view.*
 
-class JobAdapter : RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
+class JobAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
 
     // The backing list of jobs to display
     private var jobs: List<Job> = emptyList()
@@ -33,7 +33,7 @@ class JobAdapter : RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
         holder.location.text = job.location
 
         // Load the image
-        Glide.with(holder.itemView?.context!!)
+        Glide.with(holder.itemView.context!!)
                 .load(job.companyLogo)
                 .apply(RequestOptions().placeholder(R.drawable.ic_image_black_24dp))
                 .apply(RequestOptions.fitCenterTransform())
@@ -55,7 +55,7 @@ class JobAdapter : RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
     /**
      * Inflates the view and makes the {@link JobViewHolder}
      */
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): JobViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobViewHolder {
         val v = LayoutInflater.from(parent?.context).inflate(viewType, parent, false)
         return JobViewHolder(v)
     }
@@ -77,7 +77,7 @@ class JobAdapter : RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
     /**
      * View holder for a job inside the adapter
      */
-    class JobViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class JobViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         val image: ImageView = itemView.job_image
         val company: TextView = itemView.company
         val title: TextView = itemView.title
