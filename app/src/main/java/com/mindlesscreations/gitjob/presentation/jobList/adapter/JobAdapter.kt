@@ -55,7 +55,7 @@ class JobAdapter : RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
     /**
      * Inflates the view and makes the {@link JobViewHolder}
      */
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): JobViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobViewHolder {
         val v = LayoutInflater.from(parent?.context).inflate(viewType, parent, false)
         return JobViewHolder(v)
     }
