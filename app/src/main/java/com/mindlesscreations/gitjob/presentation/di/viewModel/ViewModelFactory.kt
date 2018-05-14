@@ -1,8 +1,8 @@
 package com.mindlesscreations.gitjob.presentation.di.viewModel
 
-import androidx.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModel
 import javax.inject.Inject
-import androidx.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProvider
 import javax.inject.Provider
 import javax.inject.Singleton
 

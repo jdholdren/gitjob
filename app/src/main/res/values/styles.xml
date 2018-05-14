@@ -1,17 +1,16 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <!-- For when we don't need a toolbar -->
-    <style name="AppThemeNoToolbar" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppThemeNoToolbar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="materialCardViewStyle">@style/CardTheme</item>
     </style>
 
     <style name="ItemJobCompany">
@@ -36,9 +35,5 @@
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
-    </style>
-
-    <style name="CardTheme" parent="Widget.MaterialComponents.CardView">
-        <item name="cardCornerRadius">8dp</item>
     </style>
 </resources>

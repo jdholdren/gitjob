@@ -5,8 +5,8 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.widget.NestedScrollView
-import androidx.appcompat.app.AppCompatActivity
+import android.support.v4.widget.NestedScrollView
+import android.support.v7.app.AppCompatActivity
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -16,11 +16,10 @@ import com.mindlesscreations.gitjob.domain.entities.Job
 import kotlinx.android.synthetic.main.activity_job_detail.*
 import java.util.*
 import android.net.Uri
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.content.ContextCompat
+import android.support.customtabs.CustomTabsIntent
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
-import com.google.android.material.appbar.AppBarLayout
 
 
 class JobDetailActivity : AppCompatActivity() {
@@ -78,14 +77,75 @@ class JobDetailActivity : AppCompatActivity() {
 
     private fun setupApplyButton(job: Job) {
         if (job.companyUrl == null) {
-            this.bar.visibility = View.GONE
-            this.fab.hide()
+            this.apply_button.visibility = View.GONE
             return
         }
 
-        this.fab.setOnClickListener {
+        this.apply_button.setOnClickListener {
             this.launchUrl(job.companyUrl)
         }
+
+        // The scrollY won't change until the toolbar is collapsed, so two listeners must be used
+        var oldOffset = 0
+        this.app_bar.addOnOffsetChangedListener { _, verticalOffset ->
+            if (oldOffset < verticalOffset && !this.applyHidden) {
+                this.hideApply()
+            } else if (this.applyHidden && (verticalOffset == 0 || verticalOffset < oldOffset)) {
+                this.showApply()
+            }
+
+            oldOffset = verticalOffset
+        }
+
+        this.scroll_view.setOnScrollChangeListener { _: NestedScrollView?, scrollX: Int, scrollY: Int, _: Int, oldScrollY: Int ->
+
+            // Check if it's moving down or near the bottom
+            if ((oldScrollY < scrollY && !this.applyHidden) || 25 > (this.scroll_view.bottom - (this.scroll_view.height + scrollY))) {
+                this.hideApply()
+            } else if (oldScrollY > scrollX && this.applyHidden) {
+                this.showApply()
+            }
+        }
+    }
+
+    private fun hideApply() {
+        this.applyHidden = true
+
+        val objectAnimator = ObjectAnimator.ofFloat(
+                this.apply_button,
+                "translationY",
+                this.apply_button.translationY,
+                200f
+        )
+        objectAnimator.duration = 225
+        objectAnimator.interpolator = AccelerateDecelerateInterpolator()
+
+        this.applyAnimator?.cancel()
+
+        this.applyAnimator = AnimatorSet()
+        this.applyAnimator?.play(objectAnimator)
+
+        this.applyAnimator?.start()
+    }
+
+    private fun showApply() {
+        this.applyHidden = false
+
+        val objectAnimator = ObjectAnimator.ofFloat(
+                this.apply_button,
+                "translationY",
+                this.apply_button.translationY,
+                0f
+        )
+        objectAnimator.interpolator = AccelerateDecelerateInterpolator()
+        objectAnimator.duration = 195
+
+        this.applyAnimator?.cancel()
+
+        this.applyAnimator = AnimatorSet()
+        this.applyAnimator?.play(objectAnimator)
+
+        this.applyAnimator?.start()
     }
 
     private fun launchUrl(url: String) {

@@ -1,6 +1,6 @@
 package com.mindlesscreations.gitjob.presentation.di.viewModel
 
-import androidx.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModel
 import dagger.MapKey
 import kotlin.reflect.KClass
 

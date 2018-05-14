@@ -3,14 +3,14 @@ package com.mindlesscreations.gitjob.presentation.jobList
 import android.Manifest
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
-import androidx.lifecycle.ViewModelProviders
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
@@ -79,7 +79,7 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
      * Attaches the adapter to the recycler, click listeners, and decorator
      */
     private fun setupRecycler() {
-        this.recycler_view.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        this.recycler_view.layoutManager = LinearLayoutManager(this)
         this.recycler_view.adapter = this.adapter
         this.recycler_view.addItemDecoration(VerticalSpaceDecorator(
                 this.resources.getDimension(R.dimen.card_vertical_space).toInt()
@@ -176,7 +176,7 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
                 // Turn off the loader
                 this.swipe_refresh.isRefreshing = false
 
-                com.google.android.material.snackbar.Snackbar.make(this.recycler_view, resource.message!!, com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE)
+                Snackbar.make(this.recycler_view, resource.message!!, Snackbar.LENGTH_INDEFINITE)
                         .setAction(R.string.retry, { refresh() })
                         .show()
             }
