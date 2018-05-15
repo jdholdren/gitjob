@@ -16,10 +16,10 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".presentation.home.HomeActivity"
-            android:theme="@style/SplashTheme">
+            android:label=""
+            android:theme="@style/AppThemeNoToolbar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

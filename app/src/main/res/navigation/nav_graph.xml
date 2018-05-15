@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    app:startDestination="@id/jobListFragment">
+
+    <fragment
+        android:id="@+id/jobListFragment"
+        android:name="com.mindlesscreations.gitjob.presentation.jobList.JobListFragment"
+        android:label="JobListFragment" >
+        <action
+            android:id="@+id/detail"
+            app:destination="@id/jobDetailFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/jobDetailFragment"
+        android:name="com.mindlesscreations.gitjob.presentation.jobDetail.JobDetailFragment"
+        android:label="JobDetailFragment" >
+        <argument android:name="job" />
+    </fragment>
+</navigation>

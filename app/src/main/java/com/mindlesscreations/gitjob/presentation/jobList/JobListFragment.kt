@@ -10,24 +10,31 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Switch
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.mindlesscreations.gitjob.R
 import com.mindlesscreations.gitjob.domain.entities.Job
 import com.mindlesscreations.gitjob.domain.entities.Resource
-import com.mindlesscreations.gitjob.presentation.base.InjectedActivity
+import com.mindlesscreations.gitjob.presentation.base.InjectedFragment
 import com.mindlesscreations.gitjob.presentation.decorator.VerticalSpaceDecorator
 import com.mindlesscreations.gitjob.presentation.di.AppComponent
 import com.mindlesscreations.gitjob.presentation.di.viewModel.ViewModelFactory
-import com.mindlesscreations.gitjob.presentation.jobDetail.JobDetailActivity
+import com.mindlesscreations.gitjob.presentation.jobDetail.JobDetailFragment
 import com.mindlesscreations.gitjob.presentation.jobList.adapter.JobAdapter
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
+class JobListFragment : InjectedFragment(), JobAdapter.OnClickListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -38,12 +45,26 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
 
     private var locationAnimator: AnimatorSet? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        this.setContentView(R.layout.activity_main)
+    private lateinit var location_switch: Switch
+    private lateinit var gps_container: View
+    private lateinit var recycler_view: RecyclerView
+    private lateinit var keywords: EditText
+    private lateinit var location: EditText
+    private lateinit var swipe_refresh: SwipeRefreshLayout
+    private lateinit var empty_state: View
+    private lateinit var location_container: View
 
-        // Set the toolbar as the support action bar
-        this.setSupportActionBar(this.toolbar)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.activity_main, container, false)
+
+        this.location_switch = view.findViewById(R.id.location_switch)
+        this.gps_container = view.findViewById(R.id.gps_container)
+        this.recycler_view = view.findViewById(R.id.recycler_view)
+        this.keywords = view.findViewById(R.id.keywords)
+        this.location = view.findViewById(R.id.location)
+        this.swipe_refresh = view.findViewById(R.id.swipe_refresh)
+        this.empty_state = view.findViewById(R.id.empty_state)
+        this.location_container = view.findViewById(R.id.location_container)
 
         this.setupRecycler()
         this.setupViewModel()
@@ -52,6 +73,8 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
 
         val (keywords, location, useGps) = getParams()
         this.viewModel.init(keywords, location, useGps)
+
+        return view
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -65,7 +88,7 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
                     // Permission denied, unswitch
                     this.location_switch.isChecked = false
 
-                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this.requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
                         this.gps_container.visibility = View.INVISIBLE
                     }
                 }
@@ -79,7 +102,7 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
      * Attaches the adapter to the recycler, click listeners, and decorator
      */
     private fun setupRecycler() {
-        this.recycler_view.layoutManager = LinearLayoutManager(this)
+        this.recycler_view.layoutManager = LinearLayoutManager(this.requireContext())
         this.recycler_view.adapter = this.adapter
         this.recycler_view.addItemDecoration(VerticalSpaceDecorator(
                 this.resources.getDimension(R.dimen.card_vertical_space).toInt()
@@ -92,20 +115,20 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
      */
     private fun setupFields() {
         this.keywords.setOnEditorActionListener { _, _, _ ->
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = this.activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(this.keywords.windowToken, 0)
             refresh()
             true
         }
         this.location.setOnEditorActionListener { _, _, _ ->
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = this.activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(this.location.windowToken, 0)
             refresh()
             true
         }
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && !ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+        if (ContextCompat.checkSelfPermission(this.requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && !ActivityCompat.shouldShowRequestPermissionRationale(this.requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
             // Hide the switch
             this.gps_container.visibility = View.INVISIBLE
             return
@@ -113,23 +136,23 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
 
         this.location_switch.setOnCheckedChangeListener { _, isChecked ->
             // Can get into a weird state where you can input the text if you hide it with keyboard up
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = this.activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(this.location.windowToken, 0)
 
             var wasRequested = false
 
             // Check for the location permission
             if (isChecked && ContextCompat
-                    .checkSelfPermission(
-                            this,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED) {
+                            .checkSelfPermission(
+                                    this.activity!!,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                            ) != PackageManager.PERMISSION_GRANTED) {
                 // Returning after this function does not execute, so set wasRequest to true so that
                 // the rest of this function doesn't execute
                 wasRequested = true
 
                 ActivityCompat.requestPermissions(
-                        this,
+                        this.activity!!,
                         arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
                         RC_LOCATION
                 )
@@ -258,7 +281,7 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
     //region JobAdapter.OnClickListener implementation
 
     override fun onJobClicked(job: Job) {
-        this.startActivity(JobDetailActivity.createIntent(this, job))
+        findNavController().navigate(R.id.detail, JobDetailFragment.createBundle(job))
     }
 
     //endregion
@@ -274,6 +297,6 @@ class JobListActivity : InjectedActivity(), JobAdapter.OnClickListener {
     data class Params(val keywords: String?, val location: String?, val useGps: Boolean)
 
     companion object {
-        val RC_LOCATION = 0
+        const val RC_LOCATION = 0
     }
 }

@@ -2,12 +2,21 @@ package com.mindlesscreations.gitjob.presentation.jobDetail
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.content.Context
-import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.support.customtabs.CustomTabsIntent
+import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestOptions
@@ -15,40 +24,36 @@ import com.mindlesscreations.gitjob.R
 import com.mindlesscreations.gitjob.domain.entities.Job
 import kotlinx.android.synthetic.main.activity_job_detail.*
 import java.util.*
-import android.net.Uri
-import android.support.customtabs.CustomTabsIntent
-import android.support.v4.content.ContextCompat
-import android.util.Log
-import android.view.View
 
 
-class JobDetailActivity : AppCompatActivity() {
+class JobDetailFragment : Fragment() {
 
     private var applyAnimator: AnimatorSet? = null
     private var applyHidden = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.activity_job_detail, container, false)
+    }
 
-        this.setupView()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // Get the job from the intent
-        val job = this.intent?.getParcelableExtra<Job>(EXTRA_JOB)
-
-        if (job == null) {
-            this.finish()
-        } else {
+        // Get the arguments
+        val job: Job? = this.arguments?.getParcelable(EXTRA_JOB)
+        if (job != null) {
             this.renderJob(job)
+        } else {
+            findNavController().popBackStack()
         }
+
+        val toolbar: Toolbar = view.findViewById(R.id.toolbar)
+        val appCompatActivity = this.requireActivity() as AppCompatActivity
+        appCompatActivity.setSupportActionBar(toolbar)
+        appCompatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
     }
 
     //region Instance Methods
-
-    private fun setupView() {
-        this.setContentView(R.layout.activity_job_detail)
-        this.setSupportActionBar(this.toolbar)
-        this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
 
     /**
      * Sets the job properties on the needed fields in the correct views. Also sets up click listeners
@@ -150,23 +155,21 @@ class JobDetailActivity : AppCompatActivity() {
 
     private fun launchUrl(url: String) {
         val intent = CustomTabsIntent.Builder()
-                .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                .setToolbarColor(ContextCompat.getColor(this.requireContext(), R.color.colorPrimary))
                 .build()
 
-        intent.launchUrl(this, Uri.parse(url))
+        intent.launchUrl(this.requireContext(), Uri.parse(url))
     }
 
     //endregion
 
     companion object {
+        const val EXTRA_JOB = "detail.extras.job"
 
-        private val EXTRA_JOB = "jobDetail.extras.job"
-
-        fun createIntent(context: Context, job: Job): Intent {
-            val intent = Intent(context, JobDetailActivity::class.java)
-            intent.putExtra(EXTRA_JOB, job)
-
-            return intent
+        fun createBundle(job: Job): Bundle {
+            return Bundle().apply {
+                putParcelable(EXTRA_JOB, job)
+            }
         }
     }
 }
